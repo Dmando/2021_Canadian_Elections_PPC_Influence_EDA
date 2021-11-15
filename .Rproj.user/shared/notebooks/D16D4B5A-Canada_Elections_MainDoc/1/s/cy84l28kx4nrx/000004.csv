@@ -30,7 +30,7 @@
 "
 "1",""
 "1","The downloaded binary packages are in
-	C:\Users\12243\AppData\Local\Temp\Rtmpqkyj8D\downloaded_packages"
+	C:\Users\12243\AppData\Local\Temp\RtmpErM2q1\downloaded_packages"
 "1",""
 "1","
 "
@@ -64,7 +64,7 @@
 "
 "2",""
 "2","The downloaded source packages are in
-	‘C:\Users\12243\AppData\Local\Temp\Rtmpqkyj8D\downloaded_packages’"
+	‘C:\Users\12243\AppData\Local\Temp\RtmpErM2q1\downloaded_packages’"
 "2",""
 "2","
 "
@@ -73,7 +73,7 @@
 "1",""
 "1",""
 "1","  "
-"1","[32m√[39m  [38;5;247mchecking for file 'C:\Users\12243\AppData\Local\Temp\Rtmpqkyj8D\remotes31b445533e3\mccormackandrew-mapcan-c4dafef/DESCRIPTION'[39m[36m[36m (501ms)[36m[39m"
+"1","[32m√[39m  [38;5;247mchecking for file 'C:\Users\12243\AppData\Local\Temp\RtmpErM2q1\remotes34c4204e143\mccormackandrew-mapcan-c4dafef/DESCRIPTION'[39m[36m[36m (541ms)[36m[39m"
 "1",""
 "1","
 "
@@ -85,7 +85,7 @@
 "1",""
 "1",""
 "1","  "
-"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mpreparing 'mapcan':[39m[36m[36m (1.8s)[36m[39m"
+"1","[38;5;247m-[39m[38;5;247m  [39m[38;5;247mpreparing 'mapcan':[39m[36m[36m (1.2s)[36m[39m"
 "1",""
 "1","
 "
@@ -125,7 +125,7 @@
 "1",""
 "1",""
 "1","  "
-"1","[31mE  [39m[31mcreating vignettes[39m[36m[36m (49.8s)[36m[39m"
+"1","[31mE  [39m[31mcreating vignettes[39m[36m[36m (34.6s)[36m[39m"
 "1",""
 "1","
 "
@@ -194,7 +194,7 @@
 "1",""
 "2","Error: Failed to install 'mapcan' from GitHub:
   System command 'Rcmd.exe' failed, exit status: 1, stdout + stderr:
-E> * checking for file 'C:\Users\12243\AppData\Local\Temp\Rtmpqkyj8D\remotes31b445533e3\mccormackandrew-mapcan-c4dafef/DESCRIPTION' ... OK
+E> * checking for file 'C:\Users\12243\AppData\Local\Temp\RtmpErM2q1\remotes34c4204e143\mccormackandrew-mapcan-c4dafef/DESCRIPTION' ... OK
 E> * preparing 'mapcan':
 E> * checking DESCRIPTION meta-information ... OK
 E> * installing the package to build vignettes
