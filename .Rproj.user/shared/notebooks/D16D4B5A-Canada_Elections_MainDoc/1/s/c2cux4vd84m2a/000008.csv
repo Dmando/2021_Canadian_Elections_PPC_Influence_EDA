@@ -1,0 +1,7 @@
+"0","CA_MPs <- CA %>% "
+"0","  group_by(`Political affiliation`) %>% "
+"0","  count(Winner) %>% "
+"0","  filter(Winner == ""Winner"") %>% "
+"0","  select(-Winner) %>% "
+"0","  rename(""MP's"" = n) # The discrepancy between this result and the current Canadian parliament is due to two recounts. Both effect the votes obtained slightly (about a few hundred votes total going either way). One recount at Châteauguay—Lacolle flipped the election result, causing the Liberal to beat the Bloc Quebecois candidate, the first time such a thing has happened since 2008. This is why the Liberals have 160 MPs and the BQ 32 MPs in Canada's parliament. For the purposes of consistency, I will stick with the validated results for all ridings instead of including the judicially recount results for the two ridings that requested them."
+"0","head(CA_MPs)"

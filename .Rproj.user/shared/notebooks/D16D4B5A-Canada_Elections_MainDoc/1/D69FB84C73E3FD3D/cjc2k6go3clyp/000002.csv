@@ -1,0 +1,3 @@
+"0","CA$`Political affiliation`[CA$`Political affiliation` == ""NDP-New Democratic Party""] <- ""NDP"""
+"0","CA$`Political affiliation`[CA$`Political affiliation` == ""People's Party - PPC""] <- ""PPC"""
+"0","CA$`Political affiliation`[CA$`Political affiliation` == ""CFF - Canada's Fourth Front""] <- ""CFF"""

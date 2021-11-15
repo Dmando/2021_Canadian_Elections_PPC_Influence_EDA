@@ -1,0 +1,10 @@
+"0","```r
+source('~/Arbitrage_Functions.R')
+```"
+"1","Adding missing grouping variables: `as.factor(contract_id)`
+Adding missing grouping variables: `as.factor(contract_id)`
+"
+"0","```r
+Arbitrage_Plus %>% 
+  select(shortName, contract_name, lastTradePrice, bestBuyNoCost, bestBuyYesCost, bestSellNoCost, bestSellYesCost, Gain, Risk, Arbitrage, timeStamp)
+```"

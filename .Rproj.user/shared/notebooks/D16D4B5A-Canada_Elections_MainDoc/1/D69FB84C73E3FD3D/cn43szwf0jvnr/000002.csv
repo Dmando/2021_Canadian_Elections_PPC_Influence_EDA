@@ -1,0 +1,20 @@
+"0","CA <- read_tsv(""EventResults.txt"", col_names = TRUE, skip = 1)  "
+"2","[1mRows: [22m[34m4038[39m [1mColumns: [22m[34m14[39m
+"
+"2","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m ""\t""
+[31mchr[39m (9): Electoral district number - Numéro de la circonscription, Electoral district name, Nom de la circonscription, Type of results*, Type de résul...
+[32mdbl[39m (4): Votes obtained - Votes obtenus, % Votes obtained - Votes obtenus %, Rejected ballots - Bulletins rejetés***, Total number of ballots cast - N...
+[33mlgl[39m (1): Middle name(s) - Autre(s) prénom(s)
+"
+"2","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","CA <- CA %>% "
+"0","  rename_with(~ str_remove(.x, ""-.*"")) %>% "
+"0","  mutate(Full_name = str_c(`Given name `, `Surname `, sep = "" ""), .keep = ""unused"") %>% "
+"0","  select(-`Nom de la circonscription`, -`Type de rÃ©sultats**`, -`Middle name(s) `, -`Appartenance politique`) %>% "
+"0","  filter(`Type of results*` == ""validated"") %>%  "
+"0","  select(-`Type of results*`, - `Electoral district number `) %>% "
+"0","  mutate(Total_valid_votes = `Total number of ballots cast ` - `Rejected ballots `, .keep = ""unused"")"

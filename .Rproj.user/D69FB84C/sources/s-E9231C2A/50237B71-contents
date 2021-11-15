@@ -1,0 +1,92 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(purrr)
+```
+
+# Reading in data, removing duplicate variables or concantenating variables, and improving clarity of column names
+
+```{r}
+CA <- read_tsv("EventResults.txt", col_names = TRUE, skip = 1)  
+
+CA <- CA %>% 
+  rename_with(~ str_remove(.x, "-.*")) %>% 
+  mutate(Full_name = str_c(`Given name `, `Surname `, sep = " "), .keep = "unused") %>% 
+  select(-`Nom de la circonscription`, -`Type de résultats**`, -`Middle name(s) `, -`Appartenance politique`) %>% 
+  filter(`Type of results*` == "validated") %>%  
+  select(-`Type of results*`, - `Electoral district number `) %>% 
+  mutate(Total_valid_votes = `Total number of ballots cast ` - `Rejected ballots `, .keep = "unused")
+```
+
+
+# Removing full name of political parties with acronyms
+
+```{r}
+CA$`Political affiliation`[CA$`Political affiliation` == "NDP-New Democratic Party"] <- "NDP"
+CA$`Political affiliation`[CA$`Political affiliation` == "People's Party - PPC"] <- "PPC"
+CA$`Political affiliation`[CA$`Political affiliation` == "CFF - Canada's Fourth Front"] <- "CFF"
+```
+
+
+# Ranking candidates by their perfomance in riding elections
+
+```{r}
+CA <- CA %>% 
+  group_by(`Electoral district name`) %>% 
+  mutate(Rank = rank(-`Votes obtained `)) %>% 
+  mutate(Winner = if_else(Rank == 1, "Winner", "Loser"))
+```
+```{r}
+head(CA)
+```
+
+```{r}
+CA %>% 
+  group_by(`Electoral district name`, `Political affiliation`) %>% 
+  mutate(across(`Votes obtained `, filter(`Political affiliation` = "Conservative" )))
+  
+```
+
+```{r}
+CA %>%
+  group_by(`Electoral district name`) %>% 
+  mutate(New_PA = recode(`Political affiliation`, PPC = 'Conservative')) %>% 
+  group_by(`Electoral district name`, New_PA) %>% 
+  mutate(`New_PA` = str_c(`New_PA`),
+            Q = sum(`Votes obtained `)) %>% 
+  filter()
+ # mutate(`Political affiliation` = str_c(`Political affiliation`, collapse = ""))
+       #  `Votes obtained ` = sum(`Votes obtained `), .groups = 'drop')
+ # mutate(`Political affiliation` = str_c(`Political affiliation`, collapse = '+'),
+  #          Q = sum(`Votes obtained `),groups = 'drop')
+
+#df %>%
+ # group_by(Group, gr = recode(Type, C = 'B'))%>%
+#  summarise(Type = str_c(Type, collapse = '+'),
+#            Q = sum(Quantity),.groups = 'drop')%>%
+ # select(-gr)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
