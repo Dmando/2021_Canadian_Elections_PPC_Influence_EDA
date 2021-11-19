@@ -13,6 +13,7 @@ library(mapcan)
 ```
 
 
+
 # Reading in data, removing duplicate variables or concantenating variables, and improving clarity of column names
 
 ```{r}
@@ -23,23 +24,18 @@ CA <- CA %>%
   mutate(Full_name = str_c(`Given name `, `Surname `, sep = " "), .keep = "unused") %>% 
   select(-`Nom de la circonscription`, -`Type de résultats**`, -`Middle name(s) `, -`Appartenance politique`) %>% 
   filter(`Type of results*` == "validated") %>%  
-  select(-`Type of results*`, - `Electoral district number `) %>% 
+  select(-`Type of results*`) %>% 
   mutate(Total_valid_votes = `Total number of ballots cast ` - `Rejected ballots `, .keep = "unused")
-```
-
 
 # Removing full name of political parties with acronyms
 
-```{r}
 CA$`Political affiliation`[CA$`Political affiliation` == "NDP-New Democratic Party"] <- "NDP"
 CA$`Political affiliation`[CA$`Political affiliation` == "People's Party - PPC"] <- "PPC"
 CA$`Political affiliation`[CA$`Political affiliation` == "CFF - Canada's Fourth Front"] <- "CFF"
-```
-
 
 # Ranking candidates by the number of votes they recieved and assigning a variable to winners and losers to each parliamentary riding
 
-```{r}
+
 CA <- CA %>% 
   group_by(`Electoral district name`) %>% 
   mutate(Rank = rank(-`Votes obtained `)) %>% 
@@ -48,9 +44,11 @@ CA <- CA %>%
 ### If I want to update % Votes obtained variable I'd put in %>% mutate(`% Votes obtained ` = (`Votes obtained `/Total_valid_votes)*100)
 
 CA$Rank <- as_factor(CA$Rank)
+CA$`Electoral district number ` <- as.double(CA$`Electoral district number `) 
 
-head(CA)
+# Minor adjustments to help with data manipulation in the future
 ```
+
 
 # Updating election results if the PPC never existed and their voters instead voted for the Conservatives
 
@@ -63,6 +61,7 @@ CA1 <- CA %>%
             Votes_Obtained = sum(`Votes obtained `)) %>% 
   filter(`Political affiliation` != "PPC") %>% 
   select(- `Political affiliation`, - `Votes obtained `, - `% Votes obtained `, -`Total_valid_votes`) %>% 
+  # Once unneded variables are removed and the PPC is filtered out, I add in the rank and Winner variables like in the CA dataset
   group_by(`Electoral district name`) %>% 
   mutate(Rank = rank(-Votes_Obtained)) %>%
   mutate(Winner = if_else(Rank == 1, "Winner", "Loser")) 
@@ -83,6 +82,7 @@ CA1 %>%
   filter(Winner == "Winner") %>% 
   select(-Winner) %>% 
   rename("MP's" = n)
+# Counting all instances of winner for a party and renaming that variable to MP's
 ```
 
 ```{r}
@@ -104,12 +104,18 @@ head(CA_MPs)
 CA2 <- CA %>%  
   mutate(PPC_Vote = if_else(`Political affiliation` == "PPC", `Votes obtained `, 0))
 
+# Duplicating PPC Vote into another column for further data manipulation
+
 CA2$PPC_Vote[CA2$PPC_Vote == 0] <- NA  
+
+# Turned all 0's into NA so I can use the fill function
 
 CA2 <- CA2 %>% 
   group_by(`Electoral district name`) %>% 
   fill(PPC_Vote, .direction = "updown") %>% 
   mutate_all(~ replace(., is.na(.), 0))
+
+# fill function adds the PPC Vote to all the other columns and then NA's are turned back to 0's
 
 ```
 
@@ -134,6 +140,7 @@ No_PPC <- function(Conservative, NDP, Liberal, Bloc_Quebecois){
            `Votes obtained ` = if_else(`Political affiliation` == "NDP", `Votes obtained ` + NDP * PPC_Vote, `Votes obtained `),
            `Votes obtained ` = if_else(`Political affiliation` == "Liberal", `Votes obtained ` + Liberal * PPC_Vote, `Votes obtained `),
            `Votes obtained ` = if_else(`Political affiliation` == "	Bloc Québécois", `Votes obtained ` + Bloc_Quebecois * PPC_Vote, `Votes obtained `)) %>% 
+    # Only major parties have the mutate ability since lesser parties do not have th clout to influence elections meaningfully, assuming that PPC voters did not form a new political party in the simulations
     filter(`Political affiliation` != "PPC") %>% 
     select(-PPC_Vote) %>% 
     group_by(`Electoral district name`) %>% 
@@ -194,20 +201,15 @@ calc_mp <- function(dataset) {
 # Plotting Data with CA dataset
 
 ```{r}
-pr_geographic_test <- mapcan(boundaries = ridings, type = standard)
-
-```
-
-
-```{r}
+# Manipulating the Data to fit parameters of function
 pr_geographic <- mapcan(boundaries = ridings, type = standard)
-pr_geographic <- inner_join(pr_geographic, CA, by = c("riding_name_english" = "Electoral district name")) 
-pr_geographic <- pr_geographic %>% 
-  select(-`riding_name_french`, -`pr_french`) %>% 
-  group_by(`riding_name_english`) %>% 
-  mutate(Winning_Party = case_when(`Winner` == "Winner" ~ `Political affiliation`)) %>% 
-  fill(Winning_Party, .direction = "updown")
-  
+pr_geographic <- inner_join(pr_geographic, CA, by = c("riding_code" = "Electoral district number "), keep = TRUE) 
+pr_geographic <- pr_geographic %>%
+  select(-`riding_name_french`, -`pr_french`) %>%
+  group_by(`riding_name_english`) %>%
+  mutate(Winning_Party = case_when(`Winner` == "Winner" ~ `Political affiliation`)) %>%
+  fill(Winning_Party, .direction = "updown") %>%
+  distinct(lat, .keep_all = TRUE)
 ```
 
 ```{r}
@@ -219,6 +221,29 @@ riding_map <- pr_geographic %>%
   ggtitle("2021 Federal Electoral Results")
 riding_map
 ```
+# Plotting Data with dataset created by No_PPC function
+
+```{r}
+pr_geographic <- mapcan(boundaries = ridings, type = standard)
+pr_geographic <- inner_join(pr_geographic, No_PPC(0, 0, 0, 0), by = c("riding_code" = "Electoral district number"), keep = TRUE) 
+pr_geographic <- pr_geographic %>%
+  select(-`riding_name_french`, -`pr_french`) %>%
+  group_by(`riding_name_english`) %>%
+  mutate(Winning_Party = case_when(`Winner` == "Winner" ~ `Political affiliation`)) %>%
+  fill(Winning_Party, .direction = "updown") %>%
+  distinct(lat, .keep_all = TRUE)
+
+riding_map <- pr_geographic %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = Winning_Party)) +
+  geom_polygon() +
+  coord_fixed() +
+  theme_mapcan() +
+  ggtitle("2021 Federal Electoral Results")
+riding_map
+  
+```
+
+
 
 
 
