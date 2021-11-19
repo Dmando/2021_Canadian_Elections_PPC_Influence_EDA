@@ -6,8 +6,12 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(devtools)
-install_github("mccormackandrew/mapcan", build_vignettes = TRUE)
+install_github("mccormackandrew/mapcan", build_vignettes = TRUE, force = TRUE)
 ```
+```{r}
+library(mapcan)
+```
+
 
 # Reading in data, removing duplicate variables or concantenating variables, and improving clarity of column names
 
@@ -184,6 +188,36 @@ calc_mp <- function(dataset) {
 
 ```{r}
 #calc_mp(No_PPC(1, 0, 0, 0))
+```
+
+
+# Plotting Data with CA dataset
+
+```{r}
+pr_geographic_test <- mapcan(boundaries = ridings, type = standard)
+
+```
+
+
+```{r}
+pr_geographic <- mapcan(boundaries = ridings, type = standard)
+pr_geographic <- inner_join(pr_geographic, CA, by = c("riding_name_english" = "Electoral district name")) 
+pr_geographic <- pr_geographic %>% 
+  select(-`riding_name_french`, -`pr_french`) %>% 
+  group_by(`riding_name_english`) %>% 
+  mutate(Winning_Party = case_when(`Winner` == "Winner" ~ `Political affiliation`)) %>% 
+  fill(Winning_Party, .direction = "updown")
+  
+```
+
+```{r}
+riding_map <- pr_geographic %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = Winning_Party)) +
+  geom_polygon() +
+  coord_fixed() +
+  theme_mapcan() +
+  ggtitle("2021 Federal Electoral Results")
+riding_map
 ```
 
 
