@@ -1,8 +1,0 @@
-"0","# Creating test case to create function"
-"0","# CA2.0 <- CA2 %>% "
-"0","#   mutate(`Votes obtained ` = if_else(`Political affiliation` == ""Conservative"", `Votes obtained ` + 0.5 * PPC_Vote, `Votes obtained `),"
-"0","#          `Votes obtained ` = if_else(`Political affiliation` == ""NDP"", `Votes obtained ` + 0.05 * PPC_Vote, `Votes obtained `),"
-"0","#          `Votes obtained ` = if_else(`Political affiliation` == ""Liberal"", `Votes obtained ` + 0.05 * PPC_Vote, `Votes obtained `),"
-"0","#          `Votes obtained ` = if_else(`Political affiliation` == ""	Bloc Québécois"", `Votes obtained ` + 0.05 * PPC_Vote, `Votes obtained `)) "
-"0","# CA2.0$`Votes obtained ` <- round(CA2.0$`Votes obtained `)"
-"0","# CA2.0  "

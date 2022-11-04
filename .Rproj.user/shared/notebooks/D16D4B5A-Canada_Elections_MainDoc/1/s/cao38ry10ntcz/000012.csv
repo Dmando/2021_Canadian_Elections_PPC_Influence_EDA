@@ -1,6 +1,0 @@
-"0","No_PPC(0.6, 0.05, 0.05, 0.05) %>% "
-"0","  group_by(`Political affiliation`) %>% "
-"0","  count(Winner) %>% "
-"0","  filter(Winner == ""Winner"") %>% "
-"0","  select(-Winner) %>% "
-"0","  rename(""MP's"" = n)"
